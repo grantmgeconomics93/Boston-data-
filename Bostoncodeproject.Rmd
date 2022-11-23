@@ -27,6 +27,9 @@ bigboston=rbind(Boston2019,Boston2020,Boston2022,Boston2021)
 ```{r}
 bigbostona=separate(bigboston,open_dt,into = c("year","month","day"))
 bigbostona$nmonth=as.numeric(bigbostona$month)
+bigbostona$nyear=as.numeric(bigbostona$year)
+
+
 ```
 ```{r}
 bigbostona$day=sub(" .*", "", bigbostona$day)
@@ -34,17 +37,19 @@ bigbostona$day=sub(" .*", "", bigbostona$day)
 
 ```{r}
 
-bigbostona$season =ifelse(bigbostona$nmonth<=3,"winter",ifelse(bigbostona$nmonth>=6 & bigbostona$nmonth<=9,"summer",ifelse(bigbostona$nmonth>3&bigbostona$nmonth<6,"spring",ifelse(bigbostona$nmonth>9&bigbostona$nmonth<12,"fall","y"))))
+bigbostona$season =ifelse(bigbostona$nmonth<=3,"winter",ifelse(bigbostona$nmonth>=6 & bigbostona$nmonth<=9,"summer",ifelse(bigbostona$nmonth>=3&bigbostona$nmonth<=6,"spring",ifelse(bigbostona$nmonth>=9&bigbostona$nmonth<=12,"fall",""))))
 ```
 ```{r}
 bigbostona$open_dt=bigboston$open_dt%>%as.Date()
 
 ```
 ```{r}
-bigbostona$casetime= bigbostona$closed_dt%>%as.Date() - bigbostona$open_dt
+bigbostona$casetime= (bigbostona$closed_dt%>%as.Date() - bigbostona$open_dt)
+bigbostona$days=gsub("\\ .*", "",bigbostona$casetime)%>%as.numeric()
 ```
 ```{r}
-trend=aggregate( bigbostona$casetime,list(bigbostona$season),mean)
+seasontrend=aggregate(days~season,bigbostona,mean)
+#yeartrend=aggregate()
 ```
 
 
