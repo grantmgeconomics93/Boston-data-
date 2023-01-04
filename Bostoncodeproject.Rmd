@@ -49,7 +49,7 @@ bigbostona$days=gsub("\\ .*", "",bigbostona$casetime)%>%as.numeric()
 ```
 ```{r}
 seasontrend=aggregate(days~season,bigbostona,mean)
-#good 
+ #y 
 ```
 
 
