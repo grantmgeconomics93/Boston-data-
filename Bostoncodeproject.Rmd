@@ -6,9 +6,9 @@ output: git_hub
 library(readxl)
 Boston2019 <- read_excel("C:/Users/gealy/Downloads/311_service_requests_2019.xlsx")
 library(readxl)
-massachusetts_history <- read_excel("git/Boston-data-/massachusetts-history.xlsx")
+library(readxl)
+mch <- read_excel("massachusetts-history.xlsx")
 View(massachusetts_history)
-View(Boston2019)
 library(readxl)
 Boston2020 <- read_excel("C:/Users/gealy/Downloads/Boston2020.xlsx")
 View(Boston2020)
@@ -54,6 +54,16 @@ bigbostona$days=gsub("\\ .*", "",bigbostona$casetime)%>%as.numeric()
 seasontrend=aggregate(days~season,bigbostona,mean)
  #y 
 ```
+
+```{r}
+bigdata=bigbostona%>%rename(date =open_dt )
+```
+```{r}
+covidcall=inner_join(bigdata,mch,"date")
+```
+
+
+
 
 
 
