@@ -2,6 +2,7 @@
 title: "R Notebook"
 output: git_hub
 ---
+
 ```{r}
 library(readxl)
 Boston2019 <- read_excel("C:/Users/gealy/Downloads/311_service_requests_2019.xlsx")
@@ -19,6 +20,7 @@ library(readxl)
 Boston2021 <- read_excel("C:/Users/gealy/Downloads/33112021_.xlsx")
 View(Boston2021)
 ```
+
 ```{r}
 library(tidyr)
 library(dplyr)
@@ -26,14 +28,24 @@ library(dplyr)
 
 ```{r}
 bigboston=rbind(Boston2019,Boston2020,Boston2022,Boston2021)
+bigboston$Date=gsub("\\ .*", "",bigboston$open_dt)%>%as.character()
+bigboston$cdate=gsub("\\ .*", "",bigboston$closed_dt)
 ```
+
 ```{r}
-bigbostona=separate(bigboston,open_dt,into = c("year","month","day"))
+bigboston$casetime= bigboston$cdate%>%as.Date() - bigboston$Date%>%as.Date()
+bigboston$days=gsub("\\ .*", "",bigboston$casetime)%>%as.numeric()
+```
+
+
+```{r}
+bigbostona=bigboston%>%separate(open_dt,into = c("year","month","day"))
 bigbostona$nmonth=as.numeric(bigbostona$month)
 bigbostona$nyear=as.numeric(bigbostona$year)
 
 
 ```
+
 ```{r}
 bigbostona$day=sub(" .*", "", bigbostona$day)
 ```
@@ -42,34 +54,24 @@ bigbostona$day=sub(" .*", "", bigbostona$day)
 
 bigbostona$season =ifelse(bigbostona$nmonth<=3,"winter",ifelse(bigbostona$nmonth>=6 & bigbostona$nmonth<=9,"summer",ifelse(bigbostona$nmonth>=3&bigbostona$nmonth<=6,"spring",ifelse(bigbostona$nmonth>=9&bigbostona$nmonth<=12,"fall",""))))
 ```
-```{r}
-bigbostona$open_dt=bigboston$open_dt%>%as.Date()
 
-```
-```{r}
-bigbostona$casetime= (bigbostona$closed_dt%>%as.Date() - bigbostona$open_dt)
-bigbostona$days=gsub("\\ .*", "",bigbostona$casetime)%>%as.numeric()
-```
 ```{r}
 seasontrend=aggregate(days~season,bigbostona,mean)
  #y 
 ```
 
 ```{r}
-bigdata=bigbostona%>%rename(date =open_dt )
+mchnona=replace(mch,is.na(mch),0)
+mchnona$Date=as.character(mchnona$date)
+
+
+```
+
+```{r}
+cvidbosto=inner_join(mchnona,bigbostona,"Date")
+
 ```
 ```{r}
-covidcall=inner_join(bigdata,mch,"date")
+
 ```
-
-
-
-
-
-
-
-
-
-
-
 
