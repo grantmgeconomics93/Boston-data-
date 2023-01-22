@@ -24,16 +24,18 @@ View(Boston2021)
 ```{r}
 library(tidyr)
 library(dplyr)
+library(fastDummies)
 ```
 
 ```{r}
 bigboston=rbind(Boston2019,Boston2020,Boston2022,Boston2021)
 bigboston$Date=gsub("\\ .*", "",bigboston$open_dt)%>%as.character()
 bigboston$cdate=gsub("\\ .*", "",bigboston$closed_dt)
+bigboston$odate=gsub("\\ .*", "",bigboston$open_dt)%>%as.character()
 ```
 
 ```{r}
-bigboston$casetime= bigboston$cdate%>%as.Date() - bigboston$Date%>%as.Date()
+bigboston$casetime= (bigboston$cdate%>%as.Date() - bigboston$odate%>%as.Date())%>%as.numeric()
 bigboston$days=gsub("\\ .*", "",bigboston$casetime)%>%as.numeric()
 ```
 
@@ -52,13 +54,9 @@ bigbostona$day=sub(" .*", "", bigbostona$day)
 
 ```{r}
 
-bigbostona$season =ifelse(bigbostona$nmonth<=3,"winter",ifelse(bigbostona$nmonth>=6 & bigbostona$nmonth<=9,"summer",ifelse(bigbostona$nmonth>=3&bigbostona$nmonth<=6,"spring",ifelse(bigbostona$nmonth>=9&bigbostona$nmonth<=12,"fall",""))))
+bigbostona$season =ifelse(bigbostona$nmonth<=3,"winter",ifelse(bigbostona$nmonth>3 & bigbostona$nmonth<=6,"spring",ifelse(bigbostona$nmonth>6&bigbostona$nmonth<=9,"summer","winter")))
 ```
 
-```{r}
-seasontrend=aggregate(days~season,bigbostona,mean)
- #y 
-```
 
 ```{r}
 mchnona=replace(mch,is.na(mch),0)
@@ -68,10 +66,10 @@ mchnona$Date=as.character(mchnona$date)
 ```
 
 ```{r}
-cvidbosto=inner_join(mchnona,bigbostona,"Date")
+cvidbosto=right_join(mchnona,bigbostona,"Date")
 
 ```
 ```{r}
-
+bbb=fastDummies::dummy_cols(cvidbosto,"season")
 ```
 
