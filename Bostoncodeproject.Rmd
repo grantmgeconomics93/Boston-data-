@@ -67,7 +67,7 @@ mchnona$Date=as.character(mchnona$date)
 
 ```{r}
 cvidbosto=right_join(mchnona,bigbostona,"Date")
-
+#ty
 ```
 ```{r}
 bbb=fastDummies::dummy_cols(cvidbosto,"season")
